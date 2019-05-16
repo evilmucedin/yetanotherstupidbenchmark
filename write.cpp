@@ -2,6 +2,8 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include <iostream>
+
 static constexpr size_t N = 300000000;
 static constexpr size_t M = 100000;
 
@@ -29,7 +31,7 @@ void write() {
         }
     }
     fclose(fOut);
-    printf("sum=%ld\n", sum);
+    std::cout << "sum=" << sum << std::endl;
 }
 
 int main() {
