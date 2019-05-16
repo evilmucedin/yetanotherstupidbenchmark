@@ -35,6 +35,7 @@ void readRLE() {
         sum += n;
     }
     printf("sum=%ld\n", sum);
+    close(fIn);
 }
 
 int main() {
