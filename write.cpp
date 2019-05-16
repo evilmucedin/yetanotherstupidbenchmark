@@ -2,7 +2,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-static constexpr size_t N = 100000000;
+static constexpr size_t N = 300000000;
 static constexpr size_t M = 100000;
 
 void write() {
