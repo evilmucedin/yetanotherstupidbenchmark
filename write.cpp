@@ -8,6 +8,7 @@ static constexpr size_t N = 300000000;
 static constexpr size_t M = 100000;
 
 void write() {
+    srand(0);
     int64_t sum = 0;
     FILE* fOut = fopen("rle.dat", "wb");
     for (size_t i = 0; i < N; ++i) {
