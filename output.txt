@@ -1,13 +1,24 @@
-01:02 denplusplus@denplusplus-desktop:~/Temp/yetanotherstupidbenchmark$ time dotnet run
+1:06 denplusplus@denplusplus-desktop:~/Temp/yetanotherstupidbenchmark$ cat /proc/cpuinfo | head
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 23
+model name	: Intel(R) Xeon(R) CPU           X5450  @ 3.00GHz
+stepping	: 6
+microcode	: 0x60f
+cpu MHz		: 2160.053
+cache size	: 6144 KB
+physical id	: 0
+01:07 denplusplus@denplusplus-desktop:~/Temp/yetanotherstupidbenchmark$ time ./test
 sum=14999898054814
 
-real	0m9.451s
-user	0m9.550s
-sys	0m0.646s
-01:02 denplusplus@denplusplus-desktop:~/Temp/yetanotherstupidbenchmark$ time ./test
+real	0m1.657s
+user	0m1.470s
+sys	0m0.184s
+01:07 denplusplus@denplusplus-desktop:~/Temp/yetanotherstupidbenchmark$ time dotnet run
 sum=14999898054814
 
-real	0m1.654s
-user	0m1.491s
-sys	0m0.160s
+real	0m9.663s
+user	0m9.891s
+sys	0m0.544s
 
