@@ -1,8 +1,12 @@
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include <cstdio>
 #include <cstdint>
+#include <cstring>
 
 #include <iostream>
 
@@ -73,8 +77,36 @@ void readRLEBuffer() {
     close(fIn);
 }
 
+void readRLEMmap() {
+    auto fIn = open("rle.dat", O_RDONLY);
+
+    struct stat s;
+    fstat(fIn, &s);
+    auto buffer = reinterpret_cast<const uint8_t* const>(mmap(nullptr, s.st_size, PROT_WRITE, MAP_PRIVATE, fIn, 0));
+
+    int64_t sum = 0;
+    uint8_t b;
+    int n = 0;
+    const uint8_t* const pBufferEnd = buffer + s.st_size;
+    auto pBuffer = buffer;
+    while (pBuffer != pBufferEnd) {
+        if (*pBuffer < 128) {
+            n = (n << 7) + *pBuffer;
+        } else {
+            n = (n << 7) + *pBuffer - 128;
+            sum += n;
+            n = 0;
+        }
+        ++pBuffer;
+    }
+
+    std::cout << "sum=" << sum << std::endl;
+    close(fIn);
+}
+
 int main() {
     // readRLEByte();
-    readRLEBuffer();
+    // readRLEBuffer();
+    readRLEMmap();
     return 0;
 }
