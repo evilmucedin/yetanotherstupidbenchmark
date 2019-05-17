@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Buffers;
 
 namespace test
 {
@@ -23,25 +24,29 @@ class RLETest
         Console.WriteLine("sum={0}", sum);
     }
     
-    public static void ComputeSumAlex(string filename)
+    public static int MinBufferSize = 1 << 16;
+    
+    public static void ComputeSumAlex(string fileName)
     {
-        using var fs = new FileStream(fileName, FileMode.Open);
-        using var lease = MemoryPool<byte>.Shared.Rent(MinBufferSize);
-        using var buffer = lease.Memory;
+        var fs = new FileStream(fileName, FileMode.Open);
+        var lease = MemoryPool<byte>.Shared.Rent(MinBufferSize);
+        var buffer = lease.Memory;
 
         long sum = 0;
         int n = 0;
         while (true) {
             var count = fs.Read(buffer.Span);
             if (count == 0) {
-                return sum + n;
+                Console.WriteLine("sum={0}", sum + n);
+                return;
             }
             ProcessSpan(buffer.Span.Slice(0, count), ref sum, ref n);
         }
     }
 
     private static void ProcessSpan(ReadOnlySpan<byte> span, ref long sum, ref int n) {
-        var (sum1, n1) = (sum, n); // Copying to locals -- I suspect JIT compiler won't do this
+        var sum1 = sum;
+        var n1 = n; // Copying to locals -- I suspect JIT compiler won't do this
         foreach (var b in span) {
             if (b < 128)
                 n1 = (n1 << 7) + b;

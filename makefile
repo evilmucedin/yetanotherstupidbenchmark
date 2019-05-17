@@ -9,5 +9,4 @@ cpp: test.cpp write
 	time ./test
 
 csharp: test.cs write
-	mcs test.cs
-	time mono test.exe
+	time dotnet run

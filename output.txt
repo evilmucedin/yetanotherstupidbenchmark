@@ -1,0 +1,13 @@
+01:02 denplusplus@denplusplus-desktop:~/Temp/yetanotherstupidbenchmark$ time dotnet run
+sum=14999898054814
+
+real	0m9.451s
+user	0m9.550s
+sys	0m0.646s
+01:02 denplusplus@denplusplus-desktop:~/Temp/yetanotherstupidbenchmark$ time ./test
+sum=14999898054814
+
+real	0m1.654s
+user	0m1.491s
+sys	0m0.160s
+
