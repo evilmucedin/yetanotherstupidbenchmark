@@ -7,7 +7,7 @@ write: write.cpp
 	g++ -O4 -march=native -o write write.cpp
 	./write
 
-cpp: test.cpp write gen.cpp
+cpp: test.cpp write gen.cpp cpp-profile
 	g++ -O4 -march=native -fprofile-use -o test test.cpp
 	time ./test
 

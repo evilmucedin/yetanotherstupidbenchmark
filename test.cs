@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Buffers;
+using System.Diagnostics;
 
 namespace test
 {
@@ -28,6 +29,9 @@ class RLETest
     
     public static void ComputeSumAlex(string fileName)
     {
+        var sw = new Stopwatch();
+        sw.Start();
+
         var fs = new FileStream(fileName, FileMode.Open);
         var lease = MemoryPool<byte>.Shared.Rent(MinBufferSize);
         var buffer = lease.Memory;
@@ -38,6 +42,8 @@ class RLETest
             var count = fs.Read(buffer.Span);
             if (count == 0) {
                 Console.WriteLine("sum={0}", sum + n);
+                sw.Stop();
+                Console.WriteLine("elapsed={0}", sw.Elapsed);
                 return;
             }
             ProcessSpan(buffer.Span.Slice(0, count), ref sum, ref n);
