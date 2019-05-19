@@ -9,4 +9,4 @@ cpp: test.cpp write
 	time ./test
 
 csharp: test.cs write
-	time dotnet run
+	time dotnet run -c Release
