@@ -22,7 +22,8 @@ def main():
                 mask += "80"
             else:
                 mask += "00"
-        mask += "ULL"
+        if N == 8:
+            mask += "ULL"
         print("%s if (mask == %s) {" % (prefix, mask))
         for i in range(N):
             if s[N - 1 - i]:
