@@ -1,14 +1,17 @@
 #include <fcntl.h>
-#include <unistd.h>
+#include <immintrin.h>
 #include <sys/mman.h>
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include <cstdio>
 #include <cstdint>
 #include <cstring>
 
+#include <functional>
 #include <iostream>
+#include <vector>
 
 void readRLEByte() {
     auto fIn = open("rle.dat", O_RDONLY);
@@ -148,9 +151,12 @@ void readRLEMmapCodegen() {
     while (pBuffer != pBufferEnd) {
         static constexpr size_t N = 8;
         if (pBuffer + N < pBufferEnd) {
-            uint64_t mask = *(reinterpret_cast<const uint64_t*>(pBuffer)) & 0x8080808080808080ULL;
+            auto pByte8 = reinterpret_cast<const uint64_t* const>(pBuffer);
+            auto mask = _pext_u64(*pByte8, 0x8080808080808080);
+            // uint64_t mask = *pByte8 & 0x8080808080808080ULL;
             // uint32_t mask = *(reinterpret_cast<const uint32_t*>(pBuffer)) & 0x80808080;
 #include "gen.cpp"
+            UNPACKERS[mask]();
             pBuffer += N;
         } else {
             if (*pBuffer < 128) {

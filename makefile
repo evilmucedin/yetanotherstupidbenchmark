@@ -7,11 +7,11 @@ write: write.cpp
 	g++ -O4 -fomit-frame-pointer -march=native -o write write.cpp 
 	./write
 
-cpp: test.cpp write gen.cpp cpp-profile
+cpp: test.cpp write gen.cpp cpp-profile gen
 	g++ -O4 -fomit-frame-pointer -march=native -fprofile-use -o test test.cpp
 	time ./test
 
-cpp-profile: test.cpp write gen.cpp
+cpp-profile: test.cpp write gen.cpp gen
 	g++ -O4 -fomit-frame-pointer -fprofile-generate -march=native -o test-profile test.cpp
 	time ./test-profile
 
