@@ -83,6 +83,7 @@ void readRLEMmap() {
     struct stat s;
     fstat(fIn, &s);
     auto buffer = reinterpret_cast<const uint8_t* const>(mmap(nullptr, s.st_size, PROT_WRITE, MAP_PRIVATE, fIn, 0));
+    madvise(const_cast<void*>(reinterpret_cast<const void*>(buffer)), s.st_size, MADV_SEQUENTIAL | MADV_WILLNEED);
 
     int64_t sum = 0;
     uint8_t b;
@@ -137,6 +138,7 @@ void readRLEMmapCodegen() {
     struct stat s;
     fstat(fIn, &s);
     auto buffer = reinterpret_cast<const uint8_t* const>(mmap(nullptr, s.st_size, PROT_WRITE, MAP_PRIVATE, fIn, 0));
+    madvise(const_cast<void*>(reinterpret_cast<const void*>(buffer)), s.st_size, MADV_SEQUENTIAL | MADV_WILLNEED);
 
     int64_t sum = 0;
     uint8_t b;

@@ -9,16 +9,21 @@ microcode	: 0x60f
 cpu MHz		: 2160.053
 cache size	: 6144 KB
 physical id	: 0
-01:07 denplusplus@denplusplus-desktop:~/Temp/yetanotherstupidbenchmark$ time ./test
-sum=14999898054814
 
-real	0m1.657s
-user	0m1.470s
-sys	0m0.184s
-01:07 denplusplus@denplusplus-desktop:~/Temp/yetanotherstupidbenchmark$ time dotnet run
+2:05 denplusplus@denplusplus-desktop:~/Temp/yetanotherstupidbenchmark$ make
+g++ -O4 -fprofile-generate -o test-profile test.cpp
+time ./test-profile
 sum=14999898054814
-
-real	0m9.663s
-user	0m9.891s
-sys	0m0.544s
+1.77user 0.07system 0:01.85elapsed 99%CPU (0avgtext+0avgdata 834096maxresident)k
+0inputs+8outputs (0major+13118minor)pagefaults 0swaps
+g++ -O4 -march=native -fprofile-use -o test test.cpp
+time ./test
+sum=14999898054814
+1.03user 0.06system 0:01.09elapsed 99%CPU (0avgtext+0avgdata 834108maxresident)k
+0inputs+0outputs (0major+13114minor)pagefaults 0swaps
+time dotnet run -c Release
+sum=14999898054814
+elapsed=00:00:02.1589803
+4.65user 0.59system 0:04.46elapsed 117%CPU (0avgtext+0avgdata 109172maxresident)k
+24inputs+64outputs (0major+66582minor)pagefaults 0swaps
 
