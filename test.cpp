@@ -104,9 +104,73 @@ void readRLEMmap() {
     close(fIn);
 }
 
+void readRLEMmapBit() {
+    auto fIn = open("rle.dat", O_RDONLY);
+
+    struct stat s;
+    fstat(fIn, &s);
+    auto buffer = reinterpret_cast<const uint8_t* const>(mmap(nullptr, s.st_size, PROT_WRITE, MAP_PRIVATE, fIn, 0));
+
+    int64_t sum = 0;
+    uint8_t b;
+    int n = 0;
+    const uint8_t* const pBufferEnd = buffer + s.st_size;
+    auto pBuffer = buffer;
+    while (pBuffer != pBufferEnd) {
+        if (*pBuffer & 0x80) {
+            n = (n << 7) + (*pBuffer & 0x7f);
+            sum += n;
+            n = 0;
+        } else {
+            n = (n << 7) + *pBuffer;
+        }
+        ++pBuffer;
+    }
+
+    std::cout << "sum=" << sum << std::endl;
+    close(fIn);
+}
+
+void readRLEMmapCodegen() {
+    auto fIn = open("rle.dat", O_RDONLY);
+
+    struct stat s;
+    fstat(fIn, &s);
+    auto buffer = reinterpret_cast<const uint8_t* const>(mmap(nullptr, s.st_size, PROT_WRITE, MAP_PRIVATE, fIn, 0));
+
+    int64_t sum = 0;
+    uint8_t b;
+    int n = 0;
+    const uint8_t* const pBufferEnd = buffer + s.st_size;
+    auto pBuffer = buffer;
+    while (pBuffer != pBufferEnd) {
+        static constexpr size_t N = 4;
+        if (pBuffer + N < pBufferEnd) {
+            // uint64_t mask = *(reinterpret_cast<const uint64_t*>(pBuffer)) & 0x8080808080808080ULL;
+            uint32_t mask = *(reinterpret_cast<const uint32_t*>(pBuffer)) & 0x80808080;
+#include "gen.cpp"
+            pBuffer += N;
+        } else {
+            if (*pBuffer < 128) {
+                n = (n << 7) + *pBuffer;
+            } else {
+                n = (n << 7) + *pBuffer - 128;
+                sum += n;
+                n = 0;
+            }
+            ++pBuffer;
+        }
+    }
+
+    std::cout << "sum=" << sum << std::endl;
+    close(fIn);
+}
+
 int main() {
     // readRLEByte();
     // readRLEBuffer();
     readRLEMmap();
+    // readRLEMmapBit();
+    // readRLEMmapCodegen();
     return 0;
 }
