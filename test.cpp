@@ -58,7 +58,7 @@ void readRLEBuffer() {
     int64_t sum = 0;
     uint8_t b;
     int n = 0;
-    while (bufferLen = read(fIn, buffer, BUFFER_SIZE)) {
+    while ((bufferLen = read(fIn, buffer, BUFFER_SIZE))) {
         pBuffer = buffer;
         const uint8_t* const pBufferEnd = buffer + bufferLen;
         while (pBuffer != pBufferEnd) {
@@ -146,10 +146,10 @@ void readRLEMmapCodegen() {
     const uint8_t* const pBufferEnd = buffer + s.st_size;
     auto pBuffer = buffer;
     while (pBuffer != pBufferEnd) {
-        static constexpr size_t N = 4;
+        static constexpr size_t N = 8;
         if (pBuffer + N < pBufferEnd) {
-            // uint64_t mask = *(reinterpret_cast<const uint64_t*>(pBuffer)) & 0x8080808080808080ULL;
-            uint32_t mask = *(reinterpret_cast<const uint32_t*>(pBuffer)) & 0x80808080;
+            uint64_t mask = *(reinterpret_cast<const uint64_t*>(pBuffer)) & 0x8080808080808080ULL;
+            // uint32_t mask = *(reinterpret_cast<const uint32_t*>(pBuffer)) & 0x80808080;
 #include "gen.cpp"
             pBuffer += N;
         } else {

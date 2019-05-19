@@ -12,7 +12,7 @@ def gen(n):
     return result
 
 def main():
-    N = 4
+    N = 8
     seqs = gen(N)
     prefix = ""
     for s in seqs:
