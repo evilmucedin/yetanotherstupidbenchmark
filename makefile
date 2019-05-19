@@ -12,6 +12,7 @@ cpp: test.cpp write gen.cpp cpp-profile gen
 	time ./test
 
 cpp-profile: test.cpp write gen.cpp gen
+	rm -f test.gcda
 	g++ -O4 -fomit-frame-pointer -fprofile-generate -march=native -o test-profile test.cpp
 	time ./test-profile
 

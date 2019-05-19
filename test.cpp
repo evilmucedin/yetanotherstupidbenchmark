@@ -177,8 +177,8 @@ void readRLEMmapCodegen() {
 int main() {
     // readRLEByte();
     // readRLEBuffer();
-    readRLEMmap();
+    // readRLEMmap();
     // readRLEMmapBit();
-    // readRLEMmapCodegen();
+    readRLEMmapCodegen();
     return 0;
 }

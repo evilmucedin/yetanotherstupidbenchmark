@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import sys
+
 def gen(n):
     if n == 0:
         return [[]]
@@ -7,7 +9,6 @@ def gen(n):
     result = []
     for p in prev:
         result.append(p + [0])
-    for p in prev:
         result.append(p + [1])
     return result
 
@@ -41,11 +42,11 @@ def main():
         #         print("n = (n << 7) + pBuffer[%d];" % i)
         # print("}")
         # prefix = "else"
-
+        print("%s %d" % (str(s), value), file=sys.stderr)
         print("  [&]() {")
         for i in range(N):
             if s[N - 1 - i]:
-                print("    n = (n << 7) + (pBuffer[%d] & 0x7f);" % i)
+                print("    n = (n << 7) + (pBuffer[%d] & 0x7F);" % i)
                 print("    sum += n;")
                 print("    n = 0;")
             else:
