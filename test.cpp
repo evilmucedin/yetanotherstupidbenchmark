@@ -147,27 +147,27 @@ void readRLEMmapCodegen() {
     uint8_t b;
     int n = 0;
     const uint8_t* const pBufferEnd = buffer + s.st_size;
+    static constexpr size_t N = 8;
+    const uint8_t* const pBufferEnd8 = pBufferEnd - (reinterpret_cast<size_t>(pBufferEnd) & 0x7);
     auto pBuffer = buffer;
-    while (pBuffer != pBufferEnd) {
-        static constexpr size_t N = 8;
-        if (pBuffer + N < pBufferEnd) {
-            auto pByte8 = reinterpret_cast<const uint64_t* const>(pBuffer);
-            auto mask = _pext_u64(*pByte8, 0x8080808080808080);
-            // uint64_t mask = *pByte8 & 0x8080808080808080ULL;
-            // uint32_t mask = *(reinterpret_cast<const uint32_t*>(pBuffer)) & 0x80808080;
+    while (pBuffer != pBufferEnd8) {
+        auto pByte8 = reinterpret_cast<const uint64_t* const>(pBuffer);
+        auto mask = _pext_u64(*pByte8, 0x8080808080808080);
+        // uint64_t mask = *pByte8 & 0x8080808080808080ULL;
+        // uint32_t mask = *(reinterpret_cast<const uint32_t*>(pBuffer)) & 0x80808080;
 #include "gen.cpp"
-            UNPACKERS[mask]();
-            pBuffer += N;
+        UNPACKERS[mask]();
+        pBuffer += N;
+    }
+    while (pBuffer != pBufferEnd) {
+        if (*pBuffer < 128) {
+            n = (n << 7) + *pBuffer;
         } else {
-            if (*pBuffer < 128) {
-                n = (n << 7) + *pBuffer;
-            } else {
-                n = (n << 7) + *pBuffer - 128;
-                sum += n;
-                n = 0;
-            }
-            ++pBuffer;
+            n = (n << 7) + *pBuffer - 128;
+            sum += n;
+            n = 0;
         }
+        ++pBuffer;
     }
 
     std::cout << "sum=" << sum << std::endl;
