@@ -59,7 +59,6 @@ void readRLEBuffer() {
     size_t bufferLen = 0;
 
     int64_t sum = 0;
-    uint8_t b;
     int n = 0;
     while ((bufferLen = read(fIn, buffer, BUFFER_SIZE))) {
         pBuffer = buffer;
@@ -89,7 +88,6 @@ void readRLEMmap() {
     madvise(const_cast<void*>(reinterpret_cast<const void*>(buffer)), s.st_size, MADV_SEQUENTIAL | MADV_WILLNEED);
 
     int64_t sum = 0;
-    uint8_t b;
     int n = 0;
     const uint8_t* const pBufferEnd = buffer + s.st_size;
     auto pBuffer = buffer;
@@ -116,7 +114,6 @@ void readRLEMmapBit() {
     auto buffer = reinterpret_cast<const uint8_t* const>(mmap(nullptr, s.st_size, PROT_WRITE, MAP_PRIVATE, fIn, 0));
 
     int64_t sum = 0;
-    uint8_t b;
     int n = 0;
     const uint8_t* const pBufferEnd = buffer + s.st_size;
     auto pBuffer = buffer;
@@ -135,6 +132,33 @@ void readRLEMmapBit() {
     close(fIn);
 }
 
+void baseline() {
+    auto fIn = open("rle.dat", O_RDONLY);
+
+    struct stat s;
+    fstat(fIn, &s);
+    auto buffer = reinterpret_cast<const uint8_t* const>(mmap(nullptr, s.st_size, PROT_WRITE, MAP_PRIVATE, fIn, 0));
+    madvise(const_cast<void*>(reinterpret_cast<const void*>(buffer)), s.st_size, MADV_SEQUENTIAL | MADV_WILLNEED);
+
+    int64_t sum = 0;
+    const uint8_t* const pBufferEnd = buffer + s.st_size;
+    static constexpr size_t N = 8;
+    const uint8_t* const pBufferEnd8 = pBufferEnd - (reinterpret_cast<size_t>(pBufferEnd) & 0x7);
+    auto pBuffer = buffer;
+    while (pBuffer != pBufferEnd8) {
+        auto pByte8 = reinterpret_cast<const uint64_t* const>(pBuffer);
+        sum += *pByte8;
+        pBuffer += N;
+    }
+    while (pBuffer != pBufferEnd) {
+        sum += *pBuffer;
+        ++pBuffer;
+    }
+
+    std::cout << "sum=" << sum << std::endl;
+    close(fIn);
+}
+
 void readRLEMmapCodegen() {
     auto fIn = open("rle.dat", O_RDONLY);
 
@@ -144,7 +168,6 @@ void readRLEMmapCodegen() {
     madvise(const_cast<void*>(reinterpret_cast<const void*>(buffer)), s.st_size, MADV_SEQUENTIAL | MADV_WILLNEED);
 
     int64_t sum = 0;
-    uint8_t b;
     int n = 0;
     const uint8_t* const pBufferEnd = buffer + s.st_size;
     static constexpr size_t N = 8;
@@ -177,5 +200,6 @@ int main() {
     // readRLEMmap();
     // readRLEMmapBit();
     readRLEMmapCodegen();
+    // baseline();
     return 0;
 }
