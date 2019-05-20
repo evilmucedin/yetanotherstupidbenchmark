@@ -61,7 +61,8 @@ class RLETest
                 n1 = 0;
             }
         }
-        (sum, n) = (sum1, n1);
+        sum = sum1;
+        n = n1;
     }
 
     public static void Main()

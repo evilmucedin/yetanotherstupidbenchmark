@@ -30,6 +30,10 @@ cpp-clang-profile: test.cpp write gen.cpp
 csharp: test.cs write
 	time dotnet run -c Release
 
+csharp-mono: test.cs write
+	mcs test.cs
+	mono test.exe
+
 smalltest: smallTest.cpp
 	g++ ${FLAGS} -o smallTest smallTest.cpp
 	./smallTest
