@@ -12,6 +12,57 @@ def gen(n):
         result.append(p + [1])
     return result
 
+class DecoderState:
+    def __init__(self):
+        self.bytes = []
+        self.flushed = False
+        self.extra128 = 0
+
+    def flush(self, last):
+        if len(self.bytes) == 0:
+            pass
+        elif len(self.bytes) == 1:
+            if last:
+                if self.flushed:
+                    print("    sum += pBuffer[%d];" % self.bytes[0])
+                else:
+                    if not self.flushed:
+                        print("    sum += (n << 7) + pBuffer[%d];" % self.bytes[0])
+                    else:
+                        print("    sum += pBuffer[%d];" % self.bytes[0])
+                self.extra128 += 1
+                if not self.flushed:
+                    print("    n = 0;")
+                self.flushed = True
+            else:
+                if not self.flushed:
+                    print("    n = (n << 7) + pBuffer[%d];" % self.bytes[0])
+                else:
+                    print("    n = pBuffer[%d];" % self.bytes[0])
+        else:
+            if last:
+                if self.flushed:
+                    for index in range(len(self.bytes) - 1):
+                        print("    sum += static_cast<int>(pBuffer[%d]) << %d;" % (self.bytes[index], 7*(len(self.bytes) - index - 1)))
+                else:
+                    for index in range(len(self.bytes) - 1):
+                        print("    n = (n << 7) + pBuffer[%d];" % self.bytes[index])
+                    print("    sum += n << 7;")
+                print("    sum += pBuffer[%d];" % (self.bytes[-1]))
+                self.extra128 += 1
+                if not self.flushed:
+                    print("    n = 0;")
+                self.flushed = True
+            else:
+                for index in range(len(self.bytes) - 1):
+                    print("    n = (n << 7) + pBuffer[%d];" % self.bytes[index])
+                print("    n = (n << 7) + pBuffer[%d];" % (self.bytes[-1]))
+        if not last:
+            if self.extra128:
+                print("    sum -= %d;" % (128*self.extra128))
+                self.extra128 = 0
+        self.bytes = []
+
 def main():
     N = 8
     seqs = gen(N)
@@ -27,13 +78,15 @@ def main():
                 value = 2*value
 
         print("case %d: {" % value)
+        st = DecoderState()
+        rs = s[::-1]
         for i in range(N):
-            if s[N - 1 - i]:
-                print("    sum += n << 7;")
-                print("    sum += pBuffer[%d] & 0x7F;" % i)
-                print("    n = 0;")
+            if rs[i]:
+                st.bytes.append(i)
+                st.flush(True)
             else:
-                print("    n = (n << 7) + pBuffer[%d];" % i)
+                st.bytes.append(i)
+        st.flush(False)
         print("    break;")
         print("  }")
     print("};");
