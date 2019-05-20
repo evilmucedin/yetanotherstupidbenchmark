@@ -3,7 +3,7 @@ all: cpp csharp
 gen: gen.py
 	./gen.py >gen.cpp
 
-FLAGS = -Ofast -fomit-frame-pointer -march=native -flto -funroll-loops
+FLAGS = -Ofast -fomit-frame-pointer -march=native -flto -funroll-loops -Wno-shift-count-overflow
 
 write: write.cpp
 	g++ ${FLAGS} -o write write.cpp 
@@ -29,3 +29,7 @@ cpp-clang-profile: test.cpp write gen.cpp
 
 csharp: test.cs write
 	time dotnet run -c Release
+
+smalltest: smallTest.cpp
+	g++ ${FLAGS} -o smallTest smallTest.cpp
+	./smallTest
