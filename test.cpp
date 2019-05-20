@@ -97,7 +97,7 @@ void readRLEMmap() {
         if (*pBuffer < 128) {
             n = (n << 7) + *pBuffer;
         } else {
-            n = (n << 7) + *pBuffer - 128;
+            n = (n << 7) + (*pBuffer & 0x7F);
             sum += n;
             n = 0;
         }
