@@ -18,6 +18,15 @@ cpp-profile: test.cpp write gen.cpp gen
 	g++ ${FLAGS} -fprofile-generate -o test-profile test.cpp
 	time ./test-profile
 
+cpp-8: test.cpp write gen.cpp cpp-profile-8 gen
+	g++-8 ${FLAGS} -fprofile-use -o test-8 test.cpp
+	time ./test
+
+cpp-profile-8: test.cpp write gen.cpp gen
+	rm -f test.gcda
+	g++-8 ${FLAGS} -fprofile-generate -o test-profile-8 test.cpp
+	time ./test-profile-8
+
 cpp-clang: test.cpp write gen.cpp cpp-clang-profile
 	clang++ ${FLAGS} -fprofile-instr-use=clang.prof -o test-clang test.cpp
 	time ./test-clang
