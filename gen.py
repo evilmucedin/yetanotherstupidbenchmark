@@ -17,8 +17,7 @@ def main():
     seqs = gen(N)
     prefix = ""
         
-    print("static const auto UNPACKERS = std::vector<std::function<void()>>{")
-    
+    print("switch (mask) {")
     for s in seqs:
         mask = "0x"
         value = 0
@@ -42,8 +41,8 @@ def main():
         #         print("n = (n << 7) + pBuffer[%d];" % i)
         # print("}")
         # prefix = "else"
-        print("%s %d" % (str(s), value), file=sys.stderr)
-        print("  [&]() {")
+        # print("%s %d" % (str(s), value), file=sys.stderr)
+        print("case %d: {" % value)
         for i in range(N):
             if s[N - 1 - i]:
                 print("    n = (n << 7) + (pBuffer[%d] & 0x7F);" % i)
@@ -51,7 +50,8 @@ def main():
                 print("    n = 0;")
             else:
                 print("    n = (n << 7) + pBuffer[%d];" % i)
-        print("  },")
+        print("    break;")
+        print("  }")
     print("};");
 
 

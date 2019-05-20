@@ -153,10 +153,7 @@ void readRLEMmapCodegen() {
     while (pBuffer != pBufferEnd8) {
         auto pByte8 = reinterpret_cast<const uint64_t* const>(pBuffer);
         auto mask = _pext_u64(*pByte8, 0x8080808080808080);
-        // uint64_t mask = *pByte8 & 0x8080808080808080ULL;
-        // uint32_t mask = *(reinterpret_cast<const uint32_t*>(pBuffer)) & 0x80808080;
 #include "gen.cpp"
-        UNPACKERS[mask]();
         pBuffer += N;
     }
     while (pBuffer != pBufferEnd) {
