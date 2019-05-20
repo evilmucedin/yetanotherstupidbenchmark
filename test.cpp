@@ -159,6 +159,7 @@ void baseline() {
     close(fIn);
 }
 
+#ifdef __BMI__
 void readRLEMmapCodegen() {
     auto fIn = open("rle.dat", O_RDONLY);
 
@@ -193,13 +194,18 @@ void readRLEMmapCodegen() {
     std::cout << "sum=" << sum << std::endl;
     close(fIn);
 }
+#endif
 
 int main() {
     // readRLEByte();
     // readRLEBuffer();
     // readRLEMmap();
     // readRLEMmapBit();
+#ifdef __BMI__
     readRLEMmapCodegen();
+#else
+    readRLEMmap();
+#endif
     // baseline();
     return 0;
 }

@@ -3,7 +3,7 @@ all: cpp csharp
 gen: gen.py
 	./gen.py >gen.cpp
 
-FLAGS = -Ofast -fomit-frame-pointer -march=native -flto -funroll-loops -Wno-shift-count-overflow
+FLAGS = -Ofast -fomit-frame-pointer -march=native -mtune=native -funroll-loops -Wno-shift-count-overflow -std=c++14
 
 write: write.cpp
 	g++ ${FLAGS} -o write write.cpp 
