@@ -159,7 +159,7 @@ void baseline() {
     close(fIn);
 }
 
-#ifdef __BMI__
+#ifdef __BMI2__
 void readRLEMmapCodegen() {
     auto fIn = open("rle.dat", O_RDONLY);
 
@@ -201,7 +201,7 @@ int main() {
     // readRLEBuffer();
     // readRLEMmap();
     // readRLEMmapBit();
-#ifdef __BMI__
+#ifdef __BMI2__
     readRLEMmapCodegen();
 #else
     readRLEMmap();
