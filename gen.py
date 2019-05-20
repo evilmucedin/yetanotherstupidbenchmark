@@ -24,12 +24,13 @@ class DecoderState:
         elif len(self.bytes) == 1:
             if last:
                 if self.flushed:
-                    print("    sum += pBuffer[%d];" % self.bytes[0])
+                    print("    sum0 += pBuffer[%d];" % self.bytes[0])
                 else:
                     if not self.flushed:
-                        print("    sum += (n << 7) + pBuffer[%d];" % self.bytes[0])
+                        print("    sum1 += n;")
+                        print("    sum0 += pBuffer[%d];" % self.bytes[0])
                     else:
-                        print("    sum += pBuffer[%d];" % self.bytes[0])
+                        print("    sum0 += pBuffer[%d];" % self.bytes[0])
                 self.extra128 += 1
                 if not self.flushed:
                     print("    n = 0;")
@@ -43,12 +44,12 @@ class DecoderState:
             if last:
                 if self.flushed:
                     for index in range(len(self.bytes) - 1):
-                        print("    sum += static_cast<int>(pBuffer[%d]) << %d;" % (self.bytes[index], 7*(len(self.bytes) - index - 1)))
+                        print("    sum%d += pBuffer[%d];" % (len(self.bytes) - index - 1, self.bytes[index]))
                 else:
                     for index in range(len(self.bytes) - 1):
                         print("    n = (n << 7) + pBuffer[%d];" % self.bytes[index])
-                    print("    sum += n << 7;")
-                print("    sum += pBuffer[%d];" % (self.bytes[-1]))
+                    print("    sum1 += n;")
+                print("    sum0 += pBuffer[%d];" % (self.bytes[-1]))
                 self.extra128 += 1
                 if not self.flushed:
                     print("    n = 0;")
@@ -59,7 +60,7 @@ class DecoderState:
                 print("    n = (n << 7) + pBuffer[%d];" % (self.bytes[-1]))
         if not last:
             if self.extra128:
-                print("    sum -= %d;" % (128*self.extra128))
+                print("    sum0 -= %d;" % (128*self.extra128))
                 self.extra128 = 0
         self.bytes = []
 

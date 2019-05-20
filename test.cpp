@@ -168,7 +168,14 @@ void readRLEMmapCodegen() {
     auto buffer = reinterpret_cast<const uint8_t* const>(mmap(nullptr, s.st_size, PROT_WRITE, MAP_PRIVATE, fIn, 0));
     madvise(const_cast<void*>(reinterpret_cast<const void*>(buffer)), s.st_size, MADV_SEQUENTIAL | MADV_WILLNEED);
 
-    int64_t sum = 0;
+    int64_t sum0 = 0;
+    int64_t sum1 = 0;
+    int64_t sum2 = 0;
+    int64_t sum3 = 0;
+    int64_t sum4 = 0;
+    int64_t sum5 = 0;
+    int64_t sum6 = 0;
+    int64_t sum7 = 0;
     int n = 0;
     const uint8_t* const pBufferEnd = buffer + s.st_size;
     static constexpr size_t N = 8;
@@ -185,12 +192,14 @@ void readRLEMmapCodegen() {
             n = (n << 7) + *pBuffer;
         } else {
             n = (n << 7) + *pBuffer - 128;
-            sum += n;
+            sum0 += n;
             n = 0;
         }
         ++pBuffer;
     }
 
+    int64_t sum =
+        sum0 + (sum1 << 7) + (sum2 << 14) + (sum3 << 21) + (sum4 << 28) + (sum5 << 35) + (sum6 << 42) + (sum7 << 49);
     std::cout << "sum=" << sum << std::endl;
     close(fIn);
 }
