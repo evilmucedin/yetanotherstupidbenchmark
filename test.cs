@@ -68,7 +68,9 @@ class RLETest
     public static void Main()
     {
         // ComputeSumDen("rle.dat");
-        ComputeSumAlex("rle.dat");
+        for (int i = 0; i < 3; ++i) {
+            ComputeSumAlex("rle.dat");
+        }
     }
 }
 
