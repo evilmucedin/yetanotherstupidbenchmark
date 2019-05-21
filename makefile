@@ -43,7 +43,7 @@ cpp-clang-6: test.cpp write gen.cpp cpp-clang-profile-6
 cpp-clang-profile-6: test.cpp write gen.cpp
 	clang++-6.0 ${FLAGS} -fprofile-instr-generate -o test-clang-profile-6 test.cpp
 	LLVM_PROFILE_FILE="clangraw.prof" time ./test-clang-profile-6
-	llvm-profdata merge -output=clang.prof clangraw.prof
+	llvm-profdata-6.0 merge -output=clang.prof clangraw.prof
 
 csharp: test.cs write
 	time dotnet run -c Release
