@@ -65,7 +65,7 @@ class DecoderState:
         self.bytes = []
 
 def main():
-    N = 16
+    N = 8
     seqs = gen(N)
     
     print("switch (mask) {")
