@@ -159,7 +159,6 @@ void baseline() {
     close(fIn);
 }
 
-#ifdef __BMI2__
 void readRLEMmapCodegen() {
     auto fIn = open("rle.dat", O_RDONLY);
 
@@ -183,7 +182,8 @@ void readRLEMmapCodegen() {
     auto pBuffer = buffer;
     while (pBuffer != pBufferEnd8) {
         auto pByte8 = reinterpret_cast<const uint64_t* const>(pBuffer);
-        auto mask = _pext_u64(*pByte8, 0x8080808080808080);
+        // auto mask = _pext_u64(*pByte8, 0x8080808080808080);
+        auto mask = _m_pmovmskb(*reinterpret_cast<const __m64* const>(pByte8));
 #include "gen.cpp"
         pBuffer += N;
     }
@@ -203,18 +203,13 @@ void readRLEMmapCodegen() {
     std::cout << "sum=" << sum << std::endl;
     close(fIn);
 }
-#endif
 
 int main() {
     // readRLEByte();
     // readRLEBuffer();
     // readRLEMmap();
     // readRLEMmapBit();
-#ifdef __BMI2__
     readRLEMmapCodegen();
-#else
-    readRLEMmap();
-#endif
     // baseline();
     return 0;
 }
