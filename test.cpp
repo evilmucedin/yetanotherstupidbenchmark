@@ -220,11 +220,13 @@ void readRLEMmapSIMD() {
     const __m256i mask0 = _mm256_set1_epi8(127);
     const __m256i mask1 = _mm256_set1_epi8(128);
     const __m256i zero = _mm256_setzero_si256();
-    __m256i s0 = _mm256_setzero_si256(), s1 = _mm256_setzero_si256(), s2 = _mm256_setzero_si256();
+    __m256i s0 = _mm256_setzero_si256();
+    __m256i s1 = _mm256_setzero_si256();
+    __m256i s2 = _mm256_setzero_si256();
 
     for (; pBuffer != pBufferEnd32; pBuffer += N) {
-        __m256i a = _mm256_lddqu_si256(reinterpret_cast<const __m256i*>(pBuffer)); // _mm256_load_si256
-        __m256i as = _mm256_lddqu_si256(reinterpret_cast<const __m256i*>(pBuffer+1));
+        __m256i a = _mm256_lddqu_si256(reinterpret_cast<const __m256i*>(pBuffer));  // _mm256_load_si256
+        __m256i as = _mm256_lddqu_si256(reinterpret_cast<const __m256i*>(pBuffer + 1));
         __m256i b = _mm256_and_si256(a, mask1);
         __m256i bs = _mm256_and_si256(as, mask1);
         a = _mm256_and_si256(a, mask0);
@@ -247,7 +249,9 @@ void readRLEMmapSIMD() {
     s2 = _mm256_slli_epi64(s2, 14);
     s0 = _mm256_add_epi64(s0, s1);
     s0 = _mm256_add_epi64(s0, s2);
-    uint64_t n = 0, sum = _mm256_extract_epi64(s0, 0) + _mm256_extract_epi64(s0, 1) + _mm256_extract_epi64(s0, 2) + _mm256_extract_epi64(s0, 3);
+    uint64_t n = 0;
+    uint64_t sum = _mm256_extract_epi64(s0, 0) + _mm256_extract_epi64(s0, 1) + _mm256_extract_epi64(s0, 2) +
+                   _mm256_extract_epi64(s0, 3);
     for (; pBuffer != pBufferEnd; ++pBuffer) {
         if (*pBuffer < 128) {
             n = (n << 7) + *pBuffer;
