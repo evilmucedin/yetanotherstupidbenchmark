@@ -67,8 +67,7 @@ class DecoderState:
 def main():
     N = 8
     seqs = gen(N)
-    prefix = ""
-        
+    
     print("switch (mask) {")
     for s in seqs:
         value = 0
