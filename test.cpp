@@ -204,6 +204,7 @@ void readRLEMmapCodegen() {
     close(fIn);
 }
 
+#ifdef __AVX2__
 void readRLEMmapSIMD() {
     auto fIn = open("rle.dat", O_RDONLY);
 
@@ -274,13 +275,20 @@ void readRLEMmapSIMD() {
     std::cout << "sum=" << sum << std::endl;
     close(fIn);
 }
+#endif
 
 int main() {
+    // readRLEMmapCodegen();
+    // return 0;
     // readRLEByte();
     // readRLEBuffer();
     // readRLEMmap();
     // readRLEMmapBit();
+#ifdef __AVX2__
     readRLEMmapSIMD();
+#else
+    readRLEMmapCodegen();
+#endif
 #ifdef __BMI2__
     // readRLEMmapCodegen();
 #else
