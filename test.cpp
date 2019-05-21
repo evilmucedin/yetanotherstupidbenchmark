@@ -217,18 +217,21 @@ void readRLEMmapSIMD() {
     static constexpr size_t N = 32;
     const uint8_t* const pBufferEnd32 = buffer + (s.st_size & ~31) - 32;
     const uint8_t* pBuffer = buffer;
-    const __m256i mask0 = _mm256_set1_epi8(127);
-    const __m256i mask1 = _mm256_set1_epi8(128);
+    const __m256i mask0 = _mm256_set1_epi8(0x7F);
+    const __m256i mask1 = _mm256_set1_epi8(0x80);
     const __m256i zero = _mm256_setzero_si256();
     __m256i s0 = _mm256_setzero_si256();
     __m256i s1 = _mm256_setzero_si256();
     __m256i s2 = _mm256_setzero_si256();
+    __m256i s3 = _mm256_setzero_si256();
 
     for (; pBuffer != pBufferEnd32; pBuffer += N) {
         __m256i a = _mm256_lddqu_si256(reinterpret_cast<const __m256i*>(pBuffer));  // _mm256_load_si256
         __m256i as = _mm256_lddqu_si256(reinterpret_cast<const __m256i*>(pBuffer + 1));
+        __m256i ass = _mm256_lddqu_si256(reinterpret_cast<const __m256i*>(pBuffer + 2));
         __m256i b = _mm256_and_si256(a, mask1);
         __m256i bs = _mm256_and_si256(as, mask1);
+        __m256i bss = _mm256_and_si256(ass, mask1);
         a = _mm256_and_si256(a, mask0);
         __m256i b0 = _mm256_cmpeq_epi8(b, mask1);
         __m256i a0 = _mm256_and_si256(a, b0);
@@ -237,18 +240,25 @@ void readRLEMmapSIMD() {
         __m256i bt = _mm256_or_si256(b, bs);
         __m256i b2 = _mm256_cmpgt_epi8(bt, mask1);
         __m256i a2 = _mm256_and_si256(a, b2);
+        __m256i btt = _mm256_or_si256(_mm256_or_si256(b, bs), bss);
+        __m256i b3 = _mm256_cmpgt_epi8(btt, mask1);
+        __m256i a3 = _mm256_and_si256(a, b3);
         a0 = _mm256_sad_epu8(a0, zero);
         a1 = _mm256_sad_epu8(a1, zero);
         a2 = _mm256_sad_epu8(a2, zero);
+        a3 = _mm256_sad_epu8(a3, zero);
         s0 = _mm256_add_epi64(s0, a0);
         s1 = _mm256_add_epi64(s1, a1);
         s2 = _mm256_add_epi64(s2, a2);
+        s3 = _mm256_add_epi64(s3, a3);
     }
 
     s1 = _mm256_slli_epi64(s1, 7);
     s2 = _mm256_slli_epi64(s2, 14);
+    s3 = _mm256_slli_epi64(s3, 21);
     s0 = _mm256_add_epi64(s0, s1);
     s0 = _mm256_add_epi64(s0, s2);
+    s0 = _mm256_add_epi64(s0, s3);
     uint64_t n = 0;
     uint64_t sum = _mm256_extract_epi64(s0, 0) + _mm256_extract_epi64(s0, 1) + _mm256_extract_epi64(s0, 2) +
                    _mm256_extract_epi64(s0, 3);
