@@ -176,13 +176,12 @@ void readRLEMmapCodegen() {
     int64_t sum6 = 0;
     int64_t sum7 = 0;
     int n = 0;
-    using uint128_t = __uint128_t;
     const uint8_t* const pBufferEnd = buffer + s.st_size;
     static constexpr size_t N = 8;
     const uint8_t* const pBufferEnd8 = pBufferEnd - (reinterpret_cast<size_t>(pBufferEnd) & (N - 1));
     auto pBuffer = buffer;
     while (pBuffer != pBufferEnd8) {
-        auto pByte8 = reinterpret_cast<const uint128_t* const>(pBuffer);
+        auto pByte8 = reinterpret_cast<const uint64_t* const>(pBuffer);
         // auto mask = _pext_u64(*pByte8, 0x8080808080808080);
         auto mask = _m_pmovmskb(*reinterpret_cast<const __m64* const>(pByte8));
 #include "gen.cpp"
